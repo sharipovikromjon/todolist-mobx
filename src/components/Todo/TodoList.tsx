@@ -1,6 +1,13 @@
+import {
+  TodoAddInput,
+  TodoEditInput,
+  TodoDeleteButton,
+  TodoToggleCheckbox,
+} from "../Todo";
 import { observer } from "mobx-react-lite";
-import { myTodoStore } from "../stores/todoStore";
+import { myTodoStore } from "../../stores/todoStore";
 import { useState } from "react";
+import { Input } from "antd";
 
 const TodoList = observer(() => {
   const [text, setText] = useState("");
@@ -17,7 +24,7 @@ const TodoList = observer(() => {
     <div>
       <h1>Todo List</h1>
       {/* Add task input */}
-      <input
+      <Input
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -27,9 +34,9 @@ const TodoList = observer(() => {
             handleAddTask();
           }
         }}
+        style={{ width: "50%" }}
       />
       <button onClick={handleAddTask}>Add</button>
-      <button onClick={() => myTodoStore.logOut()}>Check</button>
       {/* List of tasks */}
       <ul style={{ marginTop: "1rem" }}>
         {myTodoStore.todos.map((item) => (
@@ -75,9 +82,11 @@ const TodoList = observer(() => {
             <button onClick={() => myTodoStore.editTask(item.id)}>
               {item.edit ? "Done" : "Edit"}
             </button>
-            <button onClick={() => myTodoStore.deleteTask(item.id)}>
-              Delete
-            </button>
+            {!item.edit && (
+              <button onClick={() => myTodoStore.deleteTask(item.id)}>
+                Delete
+              </button>
+            )}
           </li>
         ))}
       </ul>
