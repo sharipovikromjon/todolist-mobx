@@ -1,1 +1,1 @@
-# todolist-mobx
+### Todo List with TypeScript and MobX, MUI for design
