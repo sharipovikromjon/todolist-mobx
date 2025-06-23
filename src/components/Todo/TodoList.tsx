@@ -1,15 +1,18 @@
 import {
-  TodoAddInput,
   TodoEditInput,
   TodoDeleteButton,
   TodoToggleCheckbox,
+  TodoAddInput,
 } from "../Todo";
 import { observer } from "mobx-react-lite";
 import { myTodoStore } from "../../stores/todoStore";
 import { useState } from "react";
-import { Input } from "antd";
+import { Typography } from "antd";
+import { CiCircleCheck } from "react-icons/ci";
+import { toast, ToastContainer } from "react-toastify";
+const { Title } = Typography;
 
-const TodoList = observer(() => {
+const TodoList: React.FC = observer(() => {
   const [text, setText] = useState("");
 
   // To clean the input field and trim the empty spaces
@@ -22,71 +25,127 @@ const TodoList = observer(() => {
 
   return (
     <div>
-      <h1>Todo List</h1>
+      <Title style={{ textAlign: "center", textTransform: "uppercase" }}>
+        Todo List
+      </Title>
+
       {/* Add task input */}
-      <Input
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Add Task"
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            handleAddTask();
-          }
-        }}
-        style={{ width: "50%" }}
-      />
-      <button onClick={handleAddTask}>Add</button>
+      <TodoAddInput />
+
       {/* List of tasks */}
-      <ul style={{ marginTop: "1rem" }}>
+      <ul
+        style={{
+          marginTop: "1rem",
+          listStyle: "none",
+          textAlign: "center",
+          padding: "0",
+        }}
+      >
         {myTodoStore.todos.map((item) => (
-          <li key={item.id} style={{ marginBottom: "10px" }}>
-            <input
-              type="checkbox"
-              checked={item.done}
-              onChange={() => myTodoStore.toggleTask(item.id)}
-            />
-            {item.edit ? (
+          <li
+            key={item.id}
+            style={{
+              marginBottom: "20px",
+              borderBottom: "1px solid #ccc",
+              paddingBottom: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              maxWidth: "800px",
+              margin: "0 auto",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center" }}>
               <input
-                type="text"
-                defaultValue={item.text}
-                onBlur={(e) => {
-                  const newText = e.target.value.trim();
-                  if (newText) {
-                    myTodoStore.updateTask(item.id, newText);
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    myTodoStore.updateTask(
-                      item.id,
-                      (e.target as HTMLInputElement).value.trim()
-                    );
-                  }
-                }}
-                autoFocus
-              />
-            ) : (
-              <span
+                type="checkbox"
+                checked={item.done}
+                onChange={() => myTodoStore.toggleTask(item.id)}
                 style={{
-                  textDecoration: item.done ? "line-through" : "none",
-                  marginLeft: "10px",
-                  marginRight: "10px",
-                  cursor: "pointer",
+                  marginRight: "17px",
+                  width: "26px",
+                  height: "26px",
+                  marginTop: "20px  ",
                 }}
-                onDoubleClick={() => myTodoStore.toggleTask(item.id)}
-              >
-                {item.text.charAt(0).toUpperCase() + item.text.slice(1)}
-              </span>
-            )}
-            <button onClick={() => myTodoStore.editTask(item.id)}>
-              {item.edit ? "Done" : "Edit"}
-            </button>
-            {!item.edit && (
-              <button onClick={() => myTodoStore.deleteTask(item.id)}>
-                Delete
-              </button>
-            )}
+              />
+              <div>
+                {item.edit ? (
+                  <input
+                    type="text"
+                    defaultValue={item.text}
+                    onBlur={(e) => {
+                      const newText = e.target.value.trim();
+                      if (newText !== "") {
+                        myTodoStore.updateTask(item.id, newText);
+                      } else {
+                        <ToastContainer />;
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const newText = (
+                          e.target as HTMLInputElement
+                        ).value.trim();
+                        if (newText !== "") {
+                          myTodoStore.updateTask(item.id, newText);
+                        } else {
+                          toast.error("Input field should not be empty");
+                        }
+                      }
+                    }}
+                    autoFocus
+                    style={{
+                      fontFamily: "Kanit",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                      textTransform: "uppercase",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                      padding: "5px",
+                      marginTop: "20px",
+                      width: "700px",
+                    }}
+                  />
+                ) : (
+                  <span
+                    style={{
+                      textDecoration: item.done ? "line-through" : "none",
+                      cursor: "pointer",
+                      fontFamily: "Kanit",
+                      fontSize: "18px",
+                      fontWeight: "500",
+                      textTransform: "uppercase",
+                      marginTop: "15px",
+                      display: "flex",
+                      alignItems: "center", // Ensure alignment with the checkbox
+                    }}
+                  >
+                    {item.text.charAt(0).toUpperCase() + item.text.slice(1)}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              {item.edit ? (
+                <CiCircleCheck
+                  style={{ width: "18px", height: "18px", cursor: "pointer" }}
+                />
+              ) : (
+                <img
+                  style={{ cursor: "pointer" }}
+                  onClick={() => myTodoStore.editTask(item.id)}
+                  src="/icons/edit-icon.svg"
+                  alt="edit"
+                />
+              )}
+              {!item.edit && (
+                <img
+                  style={{ cursor: "pointer" }}
+                  onClick={() => myTodoStore.deleteTask(item.id)}
+                  src="/icons/delete-icon.svg"
+                  alt="delete"
+                />
+              )}
+            </div>
           </li>
         ))}
       </ul>

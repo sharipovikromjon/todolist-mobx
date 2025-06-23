@@ -1,10 +1,11 @@
+import { Layout } from "antd";
 import { TodoList } from "./components/Todo";
 
 const App = () => {
   return (
-    <div>
+    <Layout style={{paddingBottom:"100px"}}>
       <TodoList />
-    </div>
+    </Layout>
   );
 };
 
