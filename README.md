@@ -25,5 +25,10 @@ The TodoList application is a simple task management tool built with React and M
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/todolist.git
-   cd todolist
+   cd to-do-list_mobx
+   npm i
+   npm run dev
+
+   and open "localhost:5173" in the browser
    ```
+
